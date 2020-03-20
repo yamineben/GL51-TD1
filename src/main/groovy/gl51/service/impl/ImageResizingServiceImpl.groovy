@@ -9,21 +9,19 @@ import gl51.service.ImageService
 import gl51.service.UptdateDataBaseService
 
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 class ImageResizingServiceImpl implements ImageResizingService {
     @Inject
-    ImageService imageService
+    ImageService image_service
 
     @Inject
-    CloudUploadService cloudUploadService
+    CloudUploadService cloud_upload_service
 
     @Inject
-    UptdateDataBaseService updateDataBaseService
+    UptdateDataBaseService update_data_base_service
 
     @Inject
-    ImageFiligraneService imageFiligraneService
+    ImageFiligraneService image_filigrane_service
 
     @Override
     Image resize(Image image_source, int new_dimension_x, int new_dimension_y) {
@@ -32,7 +30,7 @@ class ImageResizingServiceImpl implements ImageResizingService {
     @Override
     Image getAndResizeImage() {
         //Récupération de l'image
-        Image image_source=imageService.fetchImage()
+        Image image_source=image_service.fetchImage()
 
         //Redimensionnement de l'image au format 1024*1024
         Image new_image=resize(image_source,1024,1024)
@@ -41,14 +39,14 @@ class ImageResizingServiceImpl implements ImageResizingService {
         Image thumbnail=resize(image_source,50,50)
 
         //Ajout du filigrane
-        Image logo=imageFiligraneService.add_filigrane(thumbnail)
+        Image logo=image_filigrane_service.add_filigrane(thumbnail)
 
         //Stockage dans le cloud
-        cloudUploadService.uploadToCloud(new_image)
-        cloudUploadService.uploadToCloud(logo)
+        cloud_upload_service.uploadToCloud(new_image)
+        cloud_upload_service.uploadToCloud(logo)
 
         //Mise à jour de la base de données
-        updateDataBaseService.updateDatabase(new_image.getDimension_x(),new_image.getDimension_y(),new_image.getNom())
+        update_data_base_service.updateDatabase(new_image.getDimension_x(),new_image.getDimension_y(),new_image.getNom())
 
     }
 }
